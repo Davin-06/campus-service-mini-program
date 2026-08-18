@@ -1,0 +1,467 @@
+<view class="container">
+  <view class="header">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="back-btn" bindtap="goBack">
+        <text class="back-icon">‹</text>
+      </view>
+      <text class="page-title">学习工具</text>
+    </view>
+  </view>
+
+  <view class="tool-section">
+    <view class="section-title">常用工具</view>
+    <view class="tool-grid">
+      <view class="tool-item" bindtap="showCalculator">
+        <view class="tool-icon">🔢</view>
+        <text class="tool-name">计算器</text>
+      </view>
+      <view class="tool-item" bindtap="showFormula">
+        <view class="tool-icon">📐</view>
+        <text class="tool-name">公式大全</text>
+      </view>
+      <view class="tool-item" bindtap="showPomodoro">
+        <view class="tool-icon">🍅</view>
+        <text class="tool-name">番茄钟</text>
+      </view>
+      <view class="tool-item" bindtap="showTimer">
+        <view class="tool-icon">⏱️</view>
+        <text class="tool-name">计时器</text>
+      </view>
+      <view class="tool-item" bindtap="showSchedule">
+        <view class="tool-icon">📅</view>
+        <text class="tool-name">日程提醒</text>
+      </view>
+      <view class="tool-item" bindtap="showTimetable">
+        <view class="tool-icon">📚</view>
+        <text class="tool-name">课表</text>
+      </view>
+      <view class="tool-item" bindtap="showConverter">
+        <view class="tool-icon">🔄</view>
+        <text class="tool-name">单位转换</text>
+      </view>
+      <view class="tool-item" bindtap="showCurrency">
+        <view class="tool-icon">💱</view>
+        <text class="tool-name">汇率转换</text>
+      </view>
+      <view class="tool-item" bindtap="showTranslator">
+        <view class="tool-icon">🌐</view>
+        <text class="tool-name">翻译</text>
+      </view>
+      <view class="tool-item" bindtap="showCalendar">
+        <view class="tool-icon">📆</view>
+        <text class="tool-name">活动日历</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showCalc}}">
+    <view class="section-title">
+      <text>计算器</text>
+      <text class="close-btn" bindtap="hideCalculator">收起</text>
+    </view>
+    <view class="calculator card">
+      <view class="calc-display">
+        <text class="calc-expression">{{expression}}</text>
+        <text class="calc-result">{{result}}</text>
+      </view>
+      <view class="calc-buttons">
+        <view class="calc-row">
+          <view class="calc-btn clear" bindtap="calcClear">C</view>
+          <view class="calc-btn" bindtap="calcInput" data-value="(">(</view>
+          <view class="calc-btn" bindtap="calcInput" data-value=")">)</view>
+          <view class="calc-btn operator" bindtap="calcInput" data-value="/">÷</view>
+        </view>
+        <view class="calc-row">
+          <view class="calc-btn" bindtap="calcInput" data-value="7">7</view>
+          <view class="calc-btn" bindtap="calcInput" data-value="8">8</view>
+          <view class="calc-btn" bindtap="calcInput" data-value="9">9</view>
+          <view class="calc-btn operator" bindtap="calcInput" data-value="*">×</view>
+        </view>
+        <view class="calc-row">
+          <view class="calc-btn" bindtap="calcInput" data-value="4">4</view>
+          <view class="calc-btn" bindtap="calcInput" data-value="5">5</view>
+          <view class="calc-btn" bindtap="calcInput" data-value="6">6</view>
+          <view class="calc-btn operator" bindtap="calcInput" data-value="-">-</view>
+        </view>
+        <view class="calc-row">
+          <view class="calc-btn" bindtap="calcInput" data-value="1">1</view>
+          <view class="calc-btn" bindtap="calcInput" data-value="2">2</view>
+          <view class="calc-btn" bindtap="calcInput" data-value="3">3</view>
+          <view class="calc-btn operator" bindtap="calcInput" data-value="+">+</view>
+        </view>
+        <view class="calc-row">
+          <view class="calc-btn zero" bindtap="calcInput" data-value="0">0</view>
+          <view class="calc-btn" bindtap="calcInput" data-value=".">.</view>
+          <view class="calc-btn operator" bindtap="calcEqual">=</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showFormula}}">
+    <view class="section-title">
+      <text>公式大全</text>
+      <text class="close-btn" bindtap="hideFormula">收起</text>
+    </view>
+    <view class="formula-tabs">
+      <view class="formula-tab {{formulaTab === 'math' ? 'active' : ''}}" bindtap="switchFormulaTab" data-tab="math">数学</view>
+      <view class="formula-tab {{formulaTab === 'physics' ? 'active' : ''}}" bindtap="switchFormulaTab" data-tab="physics">物理</view>
+      <view class="formula-tab {{formulaTab === 'chemistry' ? 'active' : ''}}" bindtap="switchFormulaTab" data-tab="chemistry">化学</view>
+      <view class="formula-tab {{formulaTab === 'geometry' ? 'active' : ''}}" bindtap="switchFormulaTab" data-tab="geometry">几何</view>
+      <view class="formula-tab {{formulaTab === 'probability' ? 'active' : ''}}" bindtap="switchFormulaTab" data-tab="probability">概率</view>
+    </view>
+    <view class="formula-list">
+      <view class="formula-item card" wx:for="{{currentFormulas}}" wx:key="name" bindtap="copyFormula" data-formula="{{item.formula}}">
+        <view class="formula-name">{{item.name}}</view>
+        <view class="formula-content">{{item.formula}}</view>
+        <view class="formula-desc">{{item.description}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showPomodoro}}">
+    <view class="section-title">
+      <text>番茄钟</text>
+      <text class="close-btn" bindtap="hidePomodoro">收起</text>
+    </view>
+    <view class="pomodoro card">
+      <view class="pomodoro-display">
+        <view class="pomodoro-circle">
+          <text class="pomodoro-time">{{pomodoroTime}}</text>
+          <text class="pomodoro-status">{{pomodoroStatus}}</text>
+        </view>
+        <view class="pomodoro-count">
+          <text>今日完成：{{completedPomodoros}} 个番茄</text>
+        </view>
+      </view>
+      <view class="pomodoro-settings">
+        <view class="setting-item">
+          <text class="setting-label">工作时长</text>
+          <view class="setting-controls">
+            <view class="setting-btn" bindtap="adjustWorkTime" data-action="minus">-</view>
+            <text class="setting-value">{{workDuration}}分钟</text>
+            <view class="setting-btn" bindtap="adjustWorkTime" data-action="plus">+</view>
+          </view>
+        </view>
+        <view class="setting-item">
+          <text class="setting-label">休息时长</text>
+          <view class="setting-controls">
+            <view class="setting-btn" bindtap="adjustBreakTime" data-action="minus">-</view>
+            <text class="setting-value">{{breakDuration}}分钟</text>
+            <view class="setting-btn" bindtap="adjustBreakTime" data-action="plus">+</view>
+          </view>
+        </view>
+      </view>
+      <view class="pomodoro-buttons">
+        <view class="pomodoro-btn {{pomodoroRunning ? 'pause' : 'start'}}" bindtap="togglePomodoro">
+          {{pomodoroRunning ? '暂停' : '开始'}}
+        </view>
+        <view class="pomodoro-btn reset" bindtap="resetPomodoro">重置</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showTimer}}">
+    <view class="section-title">
+      <text>计时器</text>
+      <text class="close-btn" bindtap="hideTimer">收起</text>
+    </view>
+    <view class="timer card">
+      <view class="timer-display">
+        <text class="timer-time">{{timerDisplay}}</text>
+        <text class="timer-label">{{timerStatus}}</text>
+      </view>
+      <view class="timer-controls">
+        <view class="timer-control-group">
+          <text class="control-label">小时</text>
+          <view class="control-buttons">
+            <view class="control-btn" bindtap="adjustTimer" data-unit="hours" data-action="minus">-</view>
+            <text class="control-value">{{timerHours}}</text>
+            <view class="control-btn" bindtap="adjustTimer" data-unit="hours" data-action="plus">+</view>
+          </view>
+        </view>
+        <view class="timer-control-group">
+          <text class="control-label">分钟</text>
+          <view class="control-buttons">
+            <view class="control-btn" bindtap="adjustTimer" data-unit="minutes" data-action="minus">-</view>
+            <text class="control-value">{{timerMinutes}}</text>
+            <view class="control-btn" bindtap="adjustTimer" data-unit="minutes" data-action="plus">+</view>
+          </view>
+        </view>
+        <view class="timer-control-group">
+          <text class="control-label">秒</text>
+          <view class="control-buttons">
+            <view class="control-btn" bindtap="adjustTimer" data-unit="seconds" data-action="minus">-</view>
+            <text class="control-value">{{timerSeconds}}</text>
+            <view class="control-btn" bindtap="adjustTimer" data-unit="seconds" data-action="plus">+</view>
+          </view>
+        </view>
+      </view>
+      <view class="timer-buttons">
+        <view class="timer-btn {{timerRunning ? 'running' : ''}}" bindtap="toggleTimer">
+          {{timerRunning ? '暂停' : '开始'}}
+        </view>
+        <view class="timer-btn reset" bindtap="resetTimer">重置</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showSchedule}}">
+    <view class="section-title">
+      <text>日程提醒</text>
+      <text class="add-btn" bindtap="addSchedule">+ 添加</text>
+    </view>
+    <view class="schedule-list">
+      <view class="schedule-item card {{item.done ? 'done' : ''}}" wx:for="{{schedules}}" wx:key="id">
+        <view class="schedule-content" bindtap="toggleSchedule" data-id="{{item.id}}">
+          <view class="schedule-checkbox">
+            <text>{{item.done ? '✓' : ''}}</text>
+          </view>
+          <view class="schedule-info">
+            <text class="schedule-title">{{item.title}}</text>
+            <text class="schedule-time">{{item.date}} {{item.time}}</text>
+          </view>
+        </view>
+        <view class="schedule-actions">
+          <view class="action-btn" bindtap="editSchedule" data-id="{{item.id}}">编辑</view>
+          <view class="action-btn delete" bindtap="deleteSchedule" data-id="{{item.id}}">删除</view>
+        </view>
+        <view class="schedule-notify" wx:if="{{item.notifyEnabled}}">
+          <text class="notify-icon">🔔</text>
+          <text class="notify-text">已开启提醒</text>
+        </view>
+      </view>
+      <view class="empty-state" wx:if="{{schedules.length === 0}}">
+        <text class="empty-icon">📅</text>
+        <text class="empty-text">暂无日程，点击添加</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showTimetable}}">
+    <view class="section-title">
+      <text>课表</text>
+      <text class="add-btn" bindtap="addCourse">+ 添加课程</text>
+    </view>
+    <view class="timetable-tabs">
+      <view class="timetable-tab {{timetableDay === 'monday' ? 'active' : ''}}" bindtap="switchTimetableDay" data-day="monday">周一</view>
+      <view class="timetable-tab {{timetableDay === 'tuesday' ? 'active' : ''}}" bindtap="switchTimetableDay" data-day="tuesday">周二</view>
+      <view class="timetable-tab {{timetableDay === 'wednesday' ? 'active' : ''}}" bindtap="switchTimetableDay" data-day="wednesday">周三</view>
+      <view class="timetable-tab {{timetableDay === 'thursday' ? 'active' : ''}}" bindtap="switchTimetableDay" data-day="thursday">周四</view>
+      <view class="timetable-tab {{timetableDay === 'friday' ? 'active' : ''}}" bindtap="switchTimetableDay" data-day="friday">周五</view>
+    </view>
+    <view class="timetable-list">
+      <view class="course-item card" wx:for="{{currentCourses}}" wx:key="id">
+        <view class="course-time">{{item.startTime}} - {{item.endTime}}</view>
+        <view class="course-info">
+          <text class="course-name">{{item.name}}</text>
+          <text class="course-detail">{{item.teacher}} | {{item.classroom}}</text>
+        </view>
+        <view class="course-actions">
+          <view class="action-btn" bindtap="editCourse" data-id="{{item.id}}">编辑</view>
+          <view class="action-btn delete" bindtap="deleteCourse" data-id="{{item.id}}">删除</view>
+        </view>
+      </view>
+      <view class="empty-state" wx:if="{{currentCourses.length === 0}}">
+        <text class="empty-icon">📚</text>
+        <text class="empty-text">今日无课程</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showConverter}}">
+    <view class="section-title">
+      <text>单位转换</text>
+      <text class="close-btn" bindtap="hideConverter">收起</text>
+    </view>
+    <view class="converter card">
+      <view class="converter-type">
+        <view class="type-item {{converterType === 'length' ? 'active' : ''}}" bindtap="switchConverter" data-type="length">长度</view>
+        <view class="type-item {{converterType === 'weight' ? 'active' : ''}}" bindtap="switchConverter" data-type="weight">重量</view>
+        <view class="type-item {{converterType === 'temp' ? 'active' : ''}}" bindtap="switchConverter" data-type="temp">温度</view>
+        <view class="type-item {{converterType === 'area' ? 'active' : ''}}" bindtap="switchConverter" data-type="area">面积</view>
+        <view class="type-item {{converterType === 'volume' ? 'active' : ''}}" bindtap="switchConverter" data-type="volume">体积</view>
+      </view>
+      <view class="converter-input">
+        <input class="input" type="digit" value="{{inputValue}}" bindinput="onConverterInput" placeholder="输入数值"/>
+        <picker class="picker" mode="selector" range="{{fromUnits}}" range-key="name" value="{{fromIndex}}" bindchange="onFromChange">
+          <text>{{fromUnits[fromIndex] && fromUnits[fromIndex].name ? fromUnits[fromIndex].name : '选择单位'}}</text>
+        </picker>
+      </view>
+      <view class="converter-arrow">↓</view>
+      <view class="converter-output">
+        <view class="output-value">{{outputValue}}</view>
+        <picker class="picker" mode="selector" range="{{toUnits}}" range-key="name" value="{{toIndex}}" bindchange="onToChange">
+          <text>{{toUnits[toIndex] && toUnits[toIndex].name ? toUnits[toIndex].name : '选择单位'}}</text>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showCurrency}}">
+    <view class="section-title">
+      <text>汇率转换</text>
+      <text class="close-btn" bindtap="hideCurrency">收起</text>
+    </view>
+    <view class="currency card">
+      <view class="currency-input">
+        <input class="input" type="digit" value="{{currencyInput}}" bindinput="onCurrencyInput" placeholder="输入金额"/>
+        <picker class="picker" mode="selector" range="{{currencies}}" range-key="name" value="{{fromCurrencyIndex}}" bindchange="onFromCurrencyChange">
+          <text>{{currencies[fromCurrencyIndex] && currencies[fromCurrencyIndex].name ? currencies[fromCurrencyIndex].name : '选择货币'}}</text>
+        </picker>
+      </view>
+      <view class="currency-arrow" bindtap="swapCurrencies">↔</view>
+      <view class="currency-output">
+        <view class="output-value">{{currencyOutput}}</view>
+        <picker class="picker" mode="selector" range="{{currencies}}" range-key="name" value="{{toCurrencyIndex}}" bindchange="onToCurrencyChange">
+          <text>{{currencies[toCurrencyIndex] && currencies[toCurrencyIndex].name ? currencies[toCurrencyIndex].name : '选择货币'}}</text>
+        </picker>
+      </view>
+      <view class="currency-rate">
+        <text>当前汇率：1 {{currencies[fromCurrencyIndex] && currencies[fromCurrencyIndex].code ? currencies[fromCurrencyIndex].code : ''}} = {{currentRate}} {{currencies[toCurrencyIndex] && currencies[toCurrencyIndex].code ? currencies[toCurrencyIndex].code : ''}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showTranslator}}">
+    <view class="section-title">
+      <text>翻译</text>
+      <text class="close-btn" bindtap="hideTranslator">收起</text>
+    </view>
+    <view class="translator card">
+      <view class="translator-header">
+        <picker class="lang-picker" mode="selector" range="{{['中文', 'English']}}" value="{{translatorFrom === 'zh' ? 0 : 1}}" bindchange="switchTranslatorFrom">
+          <text>{{translatorFrom === 'zh' ? '中文' : 'English'}}</text>
+        </picker>
+        <view class="swap-btn" bindtap="swapLanguages">↔</view>
+        <picker class="lang-picker" mode="selector" range="{{['English', '中文']}}" value="{{translatorTo === 'en' ? 0 : 1}}" bindchange="switchTranslatorTo">
+          <text>{{translatorTo === 'en' ? 'English' : '中文'}}</text>
+        </picker>
+      </view>
+      <view class="translator-body">
+        <view class="input-area">
+          <text class="area-label">输入</text>
+          <textarea 
+            class="translator-input" 
+            value="{{translatorInput}}" 
+            bindinput="onTranslatorInput" 
+            placeholder="请输入要翻译的文字..."
+            auto-height
+          />
+        </view>
+        <view class="output-area">
+          <text class="area-label">翻译结果</text>
+          <view class="translator-output">
+            <text wx:if="{{translatorOutput}}">{{translatorOutput}}</text>
+            <text wx:else class="placeholder">翻译结果将显示在这里...</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tool-section" wx:if="{{showCalendar}}">
+    <view class="section-title">
+      <text>活动日历</text>
+      <text class="close-btn" bindtap="hideCalendar">收起</text>
+    </view>
+    <view class="calendar-header">
+      <view class="calendar-nav" bindtap="prevMonth">
+        <text class="nav-btn">‹</text>
+      </view>
+      <text class="calendar-title">{{currentYear}}年{{currentMonth}}月</text>
+      <view class="calendar-nav" bindtap="nextMonth">
+        <text class="nav-btn">›</text>
+      </view>
+    </view>
+    <view class="calendar-weekdays">
+      <text class="weekday" wx:for="{{weekdays}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="calendar-days">
+      <view class="calendar-day {{item.isToday ? 'today' : ''}} {{item.isSelected ? 'selected' : ''}} {{item.hasActivity ? 'has-activity' : ''}}" 
+            wx:for="{{calendarDays}}" 
+            wx:key="day"
+            bindtap="selectDay" 
+            data-day="{{item.day}}">
+        <text class="day-text">{{item.day}}</text>
+        <view class="activity-dot" wx:if="{{item.hasActivity}}"></view>
+      </view>
+    </view>
+    <view class="calendar-activities" wx:if="{{selectedDayActivities.length > 0}}">
+      <view class="activities-title">今日活动</view>
+      <view class="activity-item card" wx:for="{{selectedDayActivities}}" wx:key="id">
+        <view class="activity-info">
+          <text class="activity-name">{{item.title}}</text>
+          <text class="activity-time">{{item.time}}</text>
+        </view>
+        <view class="activity-status {{item.status}}">{{item.status === 'upcoming' ? '即将开始' : '进行中'}}</view>
+      </view>
+    </view>
+    <view class="calendar-activities" wx:if="{{selectedDayActivities.length === 0}}">
+      <view class="empty-state">
+        <text class="empty-icon">📅</text>
+        <text class="empty-text">暂无活动</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal" wx:if="{{showModal}}">
+    <view class="modal-mask" bindtap="hideModal"></view>
+    <view class="modal-content">
+      <view class="modal-title">{{modalType === 'schedule' ? '添加日程' : '添加课程'}}</view>
+      <view class="modal-form">
+        <view class="form-item" wx:if="{{modalType === 'schedule'}}">
+          <text class="form-label">标题</text>
+          <input class="form-input" value="{{formData.title}}" bindinput="onFormInput" data-field="title" placeholder="输入日程标题"/>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'course'}}">
+          <text class="form-label">课程名称</text>
+          <input class="form-input" value="{{formData.name}}" bindinput="onFormInput" data-field="name" placeholder="输入课程名称"/>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'course'}}">
+          <text class="form-label">教师</text>
+          <input class="form-input" value="{{formData.teacher}}" bindinput="onFormInput" data-field="teacher" placeholder="输入教师姓名"/>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'course'}}">
+          <text class="form-label">教室</text>
+          <input class="form-input" value="{{formData.classroom}}" bindinput="onFormInput" data-field="classroom" placeholder="输入教室"/>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'schedule'}}">
+          <text class="form-label">日期</text>
+          <picker mode="date" value="{{formData.date}}" bindchange="onDateChange">
+            <text class="picker-value">{{formData.date || '选择日期'}}</text>
+          </picker>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'schedule'}}">
+          <text class="form-label">时间</text>
+          <picker mode="time" value="{{formData.time}}" bindchange="onTimeChange">
+            <text class="picker-value">{{formData.time || '选择时间'}}</text>
+          </picker>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'course'}}">
+          <text class="form-label">开始时间</text>
+          <picker mode="time" value="{{formData.startTime}}" bindchange="onStartTimeChange">
+            <text class="picker-value">{{formData.startTime || '选择开始时间'}}</text>
+          </picker>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'course'}}">
+          <text class="form-label">结束时间</text>
+          <picker mode="time" value="{{formData.endTime}}" bindchange="onEndTimeChange">
+            <text class="picker-value">{{formData.endTime || '选择结束时间'}}</text>
+          </picker>
+        </view>
+        <view class="form-item" wx:if="{{modalType === 'schedule'}}">
+          <view class="notify-toggle">
+            <text class="form-label">微信提醒</text>
+            <switch checked="{{formData.notifyEnabled}}" bindchange="onNotifyChange"/>
+          </view>
+        </view>
+      </view>
+      <view class="modal-buttons">
+        <view class="modal-btn cancel" bindtap="hideModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmModal">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

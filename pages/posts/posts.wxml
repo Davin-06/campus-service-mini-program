@@ -1,0 +1,87 @@
+<view class="container">
+  <view class="header">
+    <text class="header-title">校园贴</text>
+  </view>
+
+  <view class="tab-bar">
+    <view class="tab-item {{currentTab === 'latest' ? 'active' : ''}}" bindtap="changeTab" data-tab="latest">
+      <text class="tab-text">最新</text>
+    </view>
+    <view class="tab-item {{currentTab === 'hot' ? 'active' : ''}}" bindtap="changeTab" data-tab="hot">
+      <text class="tab-text">热门</text>
+    </view>
+    <view class="tab-item {{currentTab === 'follow' ? 'active' : ''}}" bindtap="changeTab" data-tab="follow">
+      <text class="tab-text">关注</text>
+    </view>
+    <view class="tab-item {{currentTab === 'my' ? 'active' : ''}}" bindtap="changeTab" data-tab="my">
+      <text class="tab-text">我的发布</text>
+    </view>
+  </view>
+
+  <view class="category-bar">
+    <view class="category-item {{currentFilter === 'all' ? 'active' : ''}}" bindtap="changeFilter" data-filter="all">
+      <text class="category-text">全部</text>
+    </view>
+    <view class="category-item {{currentFilter === 'question' ? 'active' : ''}}" bindtap="changeFilter" data-filter="question">
+      <text class="category-text">提问</text>
+    </view>
+    <view class="category-item {{currentFilter === 'share' ? 'active' : ''}}" bindtap="changeFilter" data-filter="share">
+      <text class="category-text">分享</text>
+    </view>
+    <view class="category-item {{currentFilter === 'discussion' ? 'active' : ''}}" bindtap="changeFilter" data-filter="discussion">
+      <text class="category-text">讨论</text>
+    </view>
+    <view class="category-item {{currentFilter === 'lost' ? 'active' : ''}}" bindtap="changeFilter" data-filter="lost">
+      <text class="category-text">失物招领</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="post-list">
+    <view class="post-card" wx:for="{{filteredPosts}}" wx:key="id" bindtap="viewPost" data-id="{{item.id}}">
+      <view class="post-header">
+        <image class="avatar" src="{{item.avatar || '/images/avatar1.png'}}" mode="aspectFill"></image>
+        <view class="author-info">
+          <view class="author-name-row">
+            <text class="author-name">{{item.author}}</text>
+            <text class="author-tag">{{item.typeText}}</text>
+          </view>
+          <text class="post-time">{{item.time}}</text>
+        </view>
+      </view>
+
+      <text class="post-content">{{item.content}}</text>
+
+      <view class="post-images" wx:if="{{item.images && item.images.length > 0}}">
+        <view class="post-image-wrapper" wx:for="{{item.images}}" wx:for-item="img" wx:key="*this">
+          <image class="post-image" src="{{img}}" mode="aspectFill"></image>
+        </view>
+      </view>
+
+      <view class="post-footer">
+        <view class="footer-item" catchtap="likePost" data-id="{{item.id}}">
+          <text class="footer-icon">{{item.liked ? '❤️' : '🤍'}}</text>
+          <text class="footer-text">{{item.likes}}</text>
+        </view>
+        <view class="footer-item" catchtap="commentPost" data-id="{{item.id}}">
+          <text class="footer-icon">💬</text>
+          <text class="footer-text">{{item.comments}}</text>
+        </view>
+        <view class="footer-item" catchtap="collectPost" data-id="{{item.id}}">
+          <text class="footer-icon">{{item.collected ? '⭐' : '☆'}}</text>
+          <text class="footer-text">{{item.collects || 0}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{filteredPosts.length === 0}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无帖子</text>
+    </view>
+  </scroll-view>
+
+  <view class="fab-container">
+    <view class="fab-btn" bindtap="goToPublish">
+      <text class="fab-icon">+</text>
+    </view>
+  </view>
+</view>

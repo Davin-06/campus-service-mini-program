@@ -1,0 +1,93 @@
+<view class="container">
+  <view class="header">
+    <view class="back-btn" bindtap="goBack">
+      <text class="back-icon">‹</text>
+    </view>
+    <text class="header-title">帖子详情</text>
+  </view>
+
+  <scroll-view scroll-y class="content" wx:if="{{post}}">
+    <view class="post-card">
+      <view class="post-header">
+        <image class="avatar" src="{{post.avatar || '/images/avatar1.png'}}" mode="aspectFill"></image>
+        <view class="author-info">
+          <view class="author-name-row">
+            <text class="author-name">{{post.author}}</text>
+            <text class="author-tag">{{post.typeText}}</text>
+          </view>
+          <text class="post-time">{{post.time}}</text>
+        </view>
+      </view>
+
+      <text class="post-content">{{post.content}}</text>
+
+      <view class="post-images" wx:if="{{post.images && post.images.length > 0}}">
+        <image class="post-image" wx:for="{{post.images}}" wx:for-item="img" wx:key="*this" src="{{img}}" mode="widthFix"></image>
+      </view>
+
+      <view class="post-stats">
+        <view class="stat-item">
+          <text class="stat-icon">👁</text>
+          <text class="stat-text">{{post.views}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-icon">❤️</text>
+          <text class="stat-text">{{post.likes}}</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-icon">💬</text>
+          <text class="stat-text">{{post.comments}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="actions-bar">
+      <view class="action-item" bindtap="likePost" data-id="{{post.id}}">
+        <text class="action-icon">{{liked ? '❤️' : '🤍'}}</text>
+        <text class="action-text">{{liked ? '已点赞' : '点赞'}}</text>
+      </view>
+      <view class="action-item" bindtap="commentPost" data-id="{{post.id}}">
+        <text class="action-icon">💬</text>
+        <text class="action-text">评论</text>
+      </view>
+      <view class="action-item" bindtap="collectPost" data-id="{{post.id}}">
+        <text class="action-icon">{{collected ? '⭐' : '☆'}}</text>
+        <text class="action-text">{{collected ? '已收藏' : '收藏'}}</text>
+      </view>
+      <view class="action-item" bindtap="sharePost" data-id="{{post.id}}">
+        <text class="action-icon">🔗</text>
+        <text class="action-text">分享</text>
+      </view>
+    </view>
+
+    <view class="comments-section">
+      <text class="section-title">评论 ({{comments.length}})</text>
+
+      <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+        <image class="comment-avatar" src="{{item.avatar || '/images/avatar1.png'}}" mode="aspectFill"></image>
+        <view class="comment-content">
+          <view class="comment-header">
+            <text class="comment-author">{{item.author}}</text>
+            <text class="comment-time">{{item.time}}</text>
+          </view>
+          <text class="comment-text">{{item.content}}</text>
+          <view class="comment-actions">
+            <text class="comment-action" bindtap="replyComment" data-id="{{item.id}}" data-author="{{item.author}}">回复</text>
+            <text class="comment-action" bindtap="likeComment" data-id="{{item.id}}">{{item.likes}} ❤️</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-comments" wx:if="{{comments.length === 0}}">
+        <text class="empty-text">暂无评论，快来发表第一条评论吧！</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="comment-input-bar">
+    <input class="comment-input" placeholder="写下你的评论..." value="{{commentText}}" bindinput="onCommentInput" confirm-type="send" bindconfirm="submitComment"></input>
+    <view class="send-btn" bindtap="submitComment">
+      <text class="send-text">发送</text>
+    </view>
+  </view>
+</view>

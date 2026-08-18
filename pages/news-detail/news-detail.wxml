@@ -1,0 +1,54 @@
+<view class="container">
+  <view class="header">
+    <text class="back-btn" bindtap="goBack">←</text>
+    <text class="header-title">新闻详情</text>
+  </view>
+  
+  <view class="progress-bar">
+    <view class="progress-fill" id="progressFill"></view>
+  </view>
+  
+  <scroll-view scroll-y class="news-content" bindscroll="onScroll">
+    <view class="news-card">
+      <view class="news-title">{{news.title}}</view>
+      
+      <view class="news-meta">
+        <view class="meta-item source">
+          <text class="meta-icon">📰</text>
+          <text class="meta-text">{{news.source}}</text>
+        </view>
+        <view class="meta-divider"></view>
+        <view class="meta-item views">
+          <text class="meta-icon">👁️</text>
+          <text class="meta-text">{{news.views}} 阅读</text>
+        </view>
+        <view class="meta-divider"></view>
+        <view class="meta-item likes">
+          <text class="meta-icon">❤️</text>
+          <text class="meta-text">{{news.likes}}</text>
+        </view>
+      </view>
+      
+      <view class="article-content">
+        <view class="paragraph" wx:for="{{news.paragraphs}}" wx:key="index">
+          <text>{{item}}</text>
+        </view>
+      </view>
+      
+      <view class="article-footer">
+        <view class="stats-row">
+          <view class="stat-item">
+            <text class="stat-value">{{news.views}}</text>
+            <text class="stat-label">阅读</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{news.likes}}</text>
+            <text class="stat-label">点赞</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

@@ -1,0 +1,161 @@
+<view class="container">
+  <view class="banner" bindtap="goToBanner">
+    <swiper class="banner-swiper" autoplay="{{autoplay}}" interval="{{interval}}" circular="{{circular}}" indicator-dots="{{indicatorDots}}" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#ffffff" bindchange="onBannerChange">
+      <block wx:for="{{banners}}" wx:key="*this">
+        <swiper-item>
+          <image class="banner-image" src="{{item}}" mode="aspectFill" />
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+
+  <view class="quick-actions">
+    <view class="action-item" bindtap="goToNews">
+      <view class="action-icon-box news">
+        <view class="icon-news"></view>
+      </view>
+      <text class="action-text">新闻资讯</text>
+    </view>
+    <view class="action-item" bindtap="goToPosts">
+      <view class="action-icon-box posts">
+        <view class="icon-posts"></view>
+      </view>
+      <text class="action-text">校园贴</text>
+    </view>
+    <view class="action-item" bindtap="goToLost">
+      <view class="action-icon-box lost">
+        <view class="icon-lost"></view>
+      </view>
+      <text class="action-text">失物招领</text>
+    </view>
+    <view class="action-item" bindtap="goToCalendar">
+      <view class="action-icon-box calendar">
+        <view class="icon-calendar"></view>
+      </view>
+      <text class="action-text">活动日历</text>
+    </view>
+    <view class="action-item" bindtap="goToNotice">
+      <view class="action-icon-box notice">
+        <view class="icon-notice"></view>
+      </view>
+      <text class="action-text">通知公告</text>
+    </view>
+    <view class="action-item" bindtap="goToScenery">
+      <view class="action-icon-box scenery">
+        <view class="icon-scenery"></view>
+      </view>
+      <text class="action-text">校园风景</text>
+    </view>
+    <view class="action-item" bindtap="goToConfession">
+      <view class="action-icon-box confession">
+        <view class="icon-confession"></view>
+      </view>
+      <text class="action-text">表白墙</text>
+    </view>
+    <view class="action-item" bindtap="goToMore">
+      <view class="action-icon-box more">
+        <view class="icon-more"></view>
+      </view>
+      <text class="action-text">更多服务</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">校园公告</text>
+      <text class="section-more" bindtap="goToNotice">更多 ›</text>
+    </view>
+    <view class="notice-list">
+      <view class="notice-item" wx:for="{{notices}}" wx:key="id">
+        <view class="notice-tag" wx:if="{{item.top}}">置顶</view>
+        <view class="notice-content">
+          <text class="notice-title">{{item.title}}</text>
+          <text class="notice-time">{{item.time}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">校园活动</text>
+      <text class="section-more" bindtap="goToActivities">更多 ›</text>
+    </view>
+    <view class="activity-card">
+      <view class="activity-image">
+        <image src="{{activities[0].image}}" mode="aspectFill" />
+      </view>
+      <view class="activity-info">
+        <text class="activity-title">{{activities[0].title}}</text>
+        <text class="activity-desc">{{activities[0].desc}}</text>
+        <text class="activity-time">{{activities[0].time}}</text>
+      </view>
+      <view class="activity-btn" bindtap="joinActivity">
+        <text>立即报名</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+
+  <movable-area class="robot-area">
+    <movable-view 
+      class="robot-button" 
+      x="{{robotX}}" 
+      y="{{robotY}}" 
+      direction="all"
+      binddragend="onRobotDragEnd"
+      bindtap="onRobotTap"
+    >
+      <image src="/images/robot.png" mode="aspectFill"></image>
+    </movable-view>
+  </movable-area>
+
+  <movable-area class="chat-movable-area">
+    <movable-view 
+      class="robot-chat-panel" 
+      wx:if="{{showRobotChat}}"
+      x="{{chatPanelX}}"
+      y="{{chatPanelY}}"
+      direction="all"
+      binddragend="onChatPanelMove"
+    >
+      <view class="robot-chat-header">
+        <image class="robot-chat-mic" src="/images/robot.png" mode="aspectFit" />
+        <view class="robot-chat-close-btn" bindtap="closeRobotChat">关闭</view>
+      </view>
+      
+      <scroll-view 
+        class="robot-chat-content" 
+        scroll-y 
+        scroll-top="{{chatScrollTop}}"
+      >
+        <view 
+          class="robot-message {{item.type}}" 
+          wx:for="{{chatMessages}}" 
+          wx:key="id"
+        >
+          <view class="robot-message-bubble">{{item.content}}</view>
+        </view>
+        
+        <view class="robot-typing-indicator" wx:if="{{isTyping}}">
+          <view class="robot-typing-dot"></view>
+          <view class="robot-typing-dot"></view>
+          <view class="robot-typing-dot"></view>
+        </view>
+      </scroll-view>
+      
+      <view class="robot-chat-input-area">
+        <input 
+          class="robot-chat-input" 
+          placeholder="请输入消息..." 
+          value="{{chatInput}}"
+          bindinput="onChatInput"
+          confirm-type="send"
+          bindconfirm="sendMessage"
+        />
+        <view class="robot-chat-send-btn" bindtap="sendMessage">›</view>
+      </view>
+    </movable-view>
+  </movable-area>
+</view>

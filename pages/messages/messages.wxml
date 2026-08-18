@@ -1,0 +1,65 @@
+<view class="container">
+  <view class="header">
+    <text class="header-title">消息</text>
+    <view class="header-badge" wx:if="{{unreadCount > 0}}">{{unreadCount}}</view>
+  </view>
+
+  <view class="tabs">
+    <view 
+      class="tab-item {{activeTab === tab.id ? 'active' : ''}}" 
+      wx:for="{{tabs}}" 
+      wx:key="id"
+      bindtap="switchTab"
+      data-tab-id="{{tab.id}}"
+    >
+      <text class="tab-text">{{tab.name}}</text>
+      <view class="tab-badge" wx:if="{{tab.badge > 0}}">{{tab.badge}}</view>
+    </view>
+  </view>
+
+  <scroll-view scroll-y class="message-list">
+    <view 
+      class="message-item" 
+      wx:for="{{filteredMessages}}" 
+      wx:key="id"
+      bindtap="goToPost"
+      data-message="{{item}}"
+    >
+      <view class="avatar-wrapper" bindtap="goToProfile" data-nickname="{{item.nickname}}">
+        <image class="avatar" src="{{item.avatar || '/images/avatar1.png'}}" mode="aspectFill"></image>
+        <view class="type-icon {{item.type}}">
+          <text>{{item.type === 'like' ? '❤️' : item.type === 'comment' ? '💬' : '👤'}}</text>
+        </view>
+      </view>
+      
+      <view class="message-content">
+        <view class="message-header">
+          <text class="nickname">{{item.nickname}}</text>
+          <text class="time">{{item.time}}</text>
+        </view>
+        <text class="message-text">{{item.content}}</text>
+        <text class="post-title" wx:if="{{item.postTitle}}">「{{item.postTitle}}」</text>
+        <text class="comment-content" wx:if="{{item.commentContent}}">评论：{{item.commentContent}}</text>
+      </view>
+      
+      <view class="arrow">›</view>
+    </view>
+
+    <view class="empty-state" wx:if="{{filteredMessages.length === 0}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无消息</text>
+    </view>
+  </scroll-view>
+
+  <movable-area class="robot-area">
+    <movable-view 
+      class="robot-button" 
+      x="{{robotX}}" 
+      y="{{robotY}}" 
+      direction="all"
+      binddragend="onRobotDragEnd"
+    >
+      <image src="/images/robot.png" mode="aspectFill" bindtap="onRobotTap"></image>
+    </movable-view>
+  </movable-area>
+</view>

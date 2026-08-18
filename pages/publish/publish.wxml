@@ -1,0 +1,66 @@
+<view class="container">
+  <view class="header">
+    <view class="header-content">
+      <view class="back-btn" bindtap="goBack">
+        <text class="back-icon">‹</text>
+      </view>
+      <text class="header-title">发布帖子</text>
+    </view>
+  </view>
+  <view class="form-section">
+    <view class="form-item">
+      <text class="label">帖子类型</text>
+      <view class="type-selector">
+        <view class="type-option {{postType === 'question' ? 'active' : ''}}" bindtap="selectType" data-type="question">
+          <view class="type-icon-box question"></view>
+          <text class="type-text">提问</text>
+        </view>
+        <view class="type-option {{postType === 'share' ? 'active' : ''}}" bindtap="selectType" data-type="share">
+          <view class="type-icon-box share"></view>
+          <text class="type-text">分享</text>
+        </view>
+        <view class="type-option {{postType === 'discussion' ? 'active' : ''}}" bindtap="selectType" data-type="discussion">
+          <view class="type-icon-box discussion"></view>
+          <text class="type-text">讨论</text>
+        </view>
+        <view class="type-option {{postType === 'lost' ? 'active' : ''}}" bindtap="selectType" data-type="lost">
+          <view class="type-icon-box lost"></view>
+          <text class="type-text">失物招领</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="label">标题</text>
+      <input class="input" placeholder="请输入帖子标题" value="{{title}}" bindinput="onTitleInput" maxlength="50"></input>
+      <text class="char-count">{{title.length}}/50</text>
+    </view>
+
+    <view class="form-item">
+      <text class="label">内容</text>
+      <textarea class="textarea" placeholder="请输入帖子内容" value="{{content}}" bindinput="onContentInput" maxlength="500"></textarea>
+      <text class="char-count">{{content.length}}/500</text>
+    </view>
+
+    <view class="form-item">
+      <text class="label">图片</text>
+      <view class="image-uploader">
+        <view class="image-list">
+          <view class="image-item" wx:for="{{images}}" wx:key="*this">
+            <image class="image" src="{{item}}" mode="aspectFill"></image>
+            <view class="image-remove" bindtap="removeImage" data-index="{{index}}">✕</view>
+          </view>
+          <view class="image-add" wx:if="{{images.length < 3}}" bindtap="chooseImage">
+            <text class="add-icon">+</text>
+            <text class="add-text">添加图片</text>
+          </view>
+        </view>
+        <text class="upload-tip">最多上传3张图片</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-section">
+    <button class="btn publish-btn" bindtap="publishPost" disabled="{{!canPublish}}">发布帖子</button>
+  </view>
+</view>

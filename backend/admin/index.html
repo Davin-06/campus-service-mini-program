@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>校园交流平台 - 管理后台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f7fa; overflow-y: auto; }
+    .sidebar { width: 250px; height: 100vh; background: linear-gradient(180deg, #2d3748 0%, #1a202c 100%); color: white; position: fixed; left: 0; top: 0; overflow-y: auto; }
+    .sidebar .logo { padding: 24px; font-size: 18px; font-weight: bold; border-bottom: 1px solid #4a5568; }
+    .sidebar nav ul { list-style: none; padding: 12px; }
+    .sidebar nav li { margin-bottom: 4px; }
+    .sidebar nav a { display: block; padding: 12px 16px; border-radius: 8px; text-decoration: none; color: #a0aec0; transition: all 0.2s; }
+    .sidebar nav a:hover, .sidebar nav a.active { background: rgba(255,255,255,0.1); color: white; }
+    .sidebar nav a i { margin-right: 8px; }
+    .main { margin-left: 250px; padding: 24px; min-height: 100vh; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .header h1 { font-size: 24px; color: #1a202c; }
+    .header .user { display: flex; align-items: center; gap: 12px; }
+    .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 24px; }
+    .card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .card .number { font-size: 32px; font-weight: bold; color: #2d3748; }
+    .card .label { font-size: 14px; color: #718096; margin-top: 4px; }
+    .card.blue .number { color: #3182ce; }
+    .card.green .number { color: #38a169; }
+    .card.orange .number { color: #dd6b20; }
+    .card.red .number { color: #e53e3e; }
+    .table-container { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow-x: auto; max-height: calc(100vh - 200px); overflow-y: auto; }
+    .table-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #e2e8f0; }
+    .table-header h2 { font-size: 16px; color: #2d3748; }
+    .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-size: 14px; transition: all 0.2s; min-width: 70px; }
+    .btn-primary { background: #3182ce; color: white; }
+    .btn-primary:hover { background: #2c5282; }
+    .btn-danger { background: #e53e3e; color: white; }
+    .btn-danger:hover { background: #c53030; }
+    .btn-success { background: #38a169; color: white; }
+    .btn-success:hover { background: #2f855a; }
+    .btn-secondary { background: #e2e8f0; color: #4a5568; }
+    .btn-secondary:hover { background: #cbd5e0; }
+    .btn-sm { padding: 6px 12px; font-size: 13px; min-width: 60px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 16px 20px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { background: #f7fafc; font-weight: 600; color: #4a5568; font-size: 14px; }
+    td { font-size: 14px; }
+    tr:hover { background: #f7fafc; }
+    tr { height: 60px; }
+    .status-active { color: #38a169; font-weight: 500; }
+    .status-inactive { color: #e53e3e; font-weight: 500; }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .modal { background: white; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; padding: 0; overflow: hidden; display: flex; flex-direction: column; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #e2e8f0; background: #f7fafc; }
+    .modal-header h3 { margin: 0; font-size: 18px; }
+    .modal-close { width: 40px; height: 40px; border: none; background: #e53e3e; color: white; border-radius: 8px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .modal-close:hover { background: #c53030; }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 12px; padding: 20px; border-top: 1px solid #e2e8f0; background: #f7fafc; position: sticky; bottom: 0; }
+    .modal-footer .btn { padding: 12px 24px; font-size: 16px; min-width: 80px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+    .search-box { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; }
+    .pagination { display: flex; justify-content: center; align-items: center; gap: 8px; padding: 20px; }
+    .pagination button { padding: 8px 16px; border: 1px solid #e2e8f0; background: white; border-radius: 6px; cursor: pointer; }
+    .pagination button.active { background: #3182ce; color: white; border-color: #3182ce; }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .category-badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+    .category-general { background: #ebf8ff; color: #2b6cb0; }
+    .category-study { background: #f0fff4; color: #38a169; }
+    .category-life { background: #fffaf0; color: #d69e2e; }
+    .category-job { background: #faf5ff; color: #805ad5; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="logo">📚 校园管理后台</div>
+    <nav>
+      <ul>
+        <li><a href="#" class="active" onclick="showPage('dashboard')"><i>📊</i> 数据统计</a></li>
+        <li><a href="#" onclick="showPage('users')"><i>👥</i> 用户管理</a></li>
+        <li><a href="#" onclick="showPage('posts')"><i>📝</i> 帖子管理</a></li>
+        <li><a href="#" onclick="showPage('news')"><i>📰</i> 新闻管理</a></li>
+        <li><a href="#" onclick="showPage('newsImages')"><i>🖼️</i> 新闻图片</a></li>
+        <li><a href="#" onclick="showPage('comments')"><i>💬</i> 评论管理</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h1 id="page-title">数据统计</h1>
+      <div class="user">
+        <span>管理员</span>
+      </div>
+    </div>
+
+    <div id="dashboard-page">
+      <div class="cards">
+        <div class="card blue">
+          <div class="number" id="stat-news">0</div>
+          <div class="label">新闻数量</div>
+        </div>
+        <div class="card green">
+          <div class="number" id="stat-users">0</div>
+          <div class="label">用户数量</div>
+        </div>
+        <div class="card orange">
+          <div class="number" id="stat-posts">0</div>
+          <div class="label">帖子数量</div>
+        </div>
+        <div class="card red">
+          <div class="number" id="stat-comments">0</div>
+          <div class="label">评论数量</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="users-page" style="display: none;">
+      <div class="table-container">
+        <div class="table-header">
+          <h2>用户列表</h2>
+          <div>
+            <input type="text" class="search-box" placeholder="搜索用户..." id="user-search" onkeyup="searchUsers()">
+            <button class="btn btn-primary" onclick="showAddUserModal()">添加用户</button>
+          </div>
+        </div>
+        <table id="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>昵称</th>
+              <th>真实姓名</th>
+              <th>学号</th>
+              <th>角色</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="pagination" id="users-pagination"></div>
+      </div>
+    </div>
+
+    <div id="posts-page" style="display: none;">
+      <div class="table-container">
+        <div class="table-header">
+          <h2>帖子列表</h2>
+          <div>
+            <input type="text" class="search-box" placeholder="搜索帖子..." id="post-search" onkeyup="searchPosts()">
+            <button class="btn btn-secondary" onclick="resetPostIds()" style="margin-right: 8px;">重置ID</button>
+            <button class="btn btn-primary" onclick="showAddPostModal()">发布帖子</button>
+          </div>
+        </div>
+        <table id="posts-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>标题</th>
+              <th>作者</th>
+              <th>分类</th>
+              <th>浏览/点赞/评论</th>
+              <th>置顶</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="pagination" id="posts-pagination"></div>
+      </div>
+    </div>
+
+    <div id="news-page" style="display: none;">
+      <div class="table-container">
+        <div class="table-header">
+          <h2>新闻列表</h2>
+          <div>
+            <input type="text" class="search-box" placeholder="搜索新闻..." id="news-search" onkeyup="searchNews()">
+            <button class="btn btn-primary" onclick="showAddNewsModal()">添加新闻</button>
+          </div>
+        </div>
+        <table id="news-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>标题</th>
+              <th>来源</th>
+              <th>分类</th>
+              <th>浏览/点赞</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="pagination" id="news-pagination"></div>
+      </div>
+    </div>
+
+    <div id="newsImages-page" style="display: none;">
+      <div class="table-container">
+        <div class="table-header">
+          <h2>新闻图片管理</h2>
+        </div>
+        <div style="padding: 20px;">
+          <p style="margin-bottom: 16px; color: #666;">选择一条新闻，然后上传对应的图片：</p>
+          <div class="form-group">
+            <label>选择新闻</label>
+            <select id="image-news-select" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px;">
+              <option value="">-- 请选择新闻 --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>新闻图片</label>
+            <div id="current-image-preview" style="border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 12px; min-height: 120px;">
+              <p style="color: #999;">暂无图片</p>
+            </div>
+            <div style="border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('news-image-file').click()">
+              <input type="file" id="news-image-file" accept="image/*" style="display: none;" onchange="previewNewsImage()">
+              <p style="color: #3182ce;">📷 点击上传新图片</p>
+            </div>
+            <input type="hidden" id="news-image-base64">
+          </div>
+          <div style="display: flex; gap: 12px; margin-top: 16px;">
+            <button class="btn btn-primary" onclick="saveNewsImage()">保存图片</button>
+            <button class="btn btn-danger" onclick="deleteNewsImage()">删除图片</button>
+          </div>
+        </div>
+        <div style="padding: 0 20px 20px;">
+          <h3 style="margin-bottom: 12px; font-size: 14px; color: #4a5568;">已有图片的新闻</h3>
+          <div id="news-images-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="comments-page" style="display: none;">
+      <div class="table-container">
+        <div class="table-header">
+          <h2>评论列表</h2>
+          <input type="text" class="search-box" placeholder="搜索评论..." id="comment-search" onkeyup="searchComments()">
+        </div>
+        <table id="comments-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>内容</th>
+              <th>帖子</th>
+              <th>评论者</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+        <div class="pagination" id="comments-pagination"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal">
+    <div class="modal" id="modal-content"></div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    let currentPage = 'dashboard';
+    let usersPage = 1, postsPage = 1, newsPage = 1, commentsPage = 1;
+    let allUsers = [], allPosts = [], allNews = [], allComments = [];
+
+    async function fetchData(url) {
+      try {
+        const res = await fetch(API_BASE + url);
+        return await res.json();
+      } catch (e) {
+        console.error('API请求失败:', e);
+        return { code: 500, message: '请求失败' };
+      }
+    }
+
+    function showPage(page) {
+      document.querySelectorAll('.sidebar nav a').forEach(a => a.classList.remove('active'));
+      document.querySelector(`.sidebar nav a[onclick="showPage('${page}')"]`).classList.add('active');
+      
+      document.querySelectorAll('[id$="-page"]').forEach(p => p.style.display = 'none');
+      document.getElementById(`${page}-page`).style.display = 'block';
+      
+      document.getElementById('page-title').textContent = {
+        dashboard: '数据统计',
+        users: '用户管理',
+        posts: '帖子管理',
+        news: '新闻管理',
+        newsImages: '新闻图片管理',
+        comments: '评论管理'
+      }[page];
+      
+      currentPage = page;
+      
+      if (page === 'dashboard') loadStatistics();
+      else if (page === 'users') loadUsers();
+      else if (page === 'posts') loadPosts();
+      else if (page === 'news') loadNews();
+      else if (page === 'newsImages') loadNewsImages();
+      else if (page === 'comments') loadComments();
+    }
+
+    async function loadStatistics() {
+      const res = await fetchData('/statistics');
+      if (res.code === 200) {
+        document.getElementById('stat-news').textContent = res.data.news;
+        document.getElementById('stat-users').textContent = res.data.users;
+        document.getElementById('stat-posts').textContent = res.data.posts;
+        document.getElementById('stat-comments').textContent = res.data.comments;
+      }
+    }
+
+    async function loadUsers(page = 1) {
+      const res = await fetchData(`/users?page=${page}&page_size=10`);
+      if (res.code === 200) {
+        allUsers = res.data.list;
+        renderUsersTable(allUsers);
+        renderPagination('users', page, Math.ceil(res.data.total / 10));
+      }
+    }
+
+    function searchUsers() {
+      const keyword = document.getElementById('user-search').value.toLowerCase();
+      const filtered = allUsers.filter(u => 
+        u.nickname.toLowerCase().includes(keyword) || 
+        u.real_name.toLowerCase().includes(keyword) ||
+        u.student_id.includes(keyword)
+      );
+      renderUsersTable(filtered);
+    }
+
+    function renderUsersTable(users) {
+      const tbody = document.querySelector('#users-table tbody');
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td>${u.id}</td>
+          <td>${u.nickname || '-'}</td>
+          <td>${u.real_name || '-'}</td>
+          <td>${u.student_id || '-'}</td>
+          <td>${u.role === 'admin' ? '管理员' : u.role === 'teacher' ? '教师' : '学生'}</td>
+          <td><span class="${u.status ? 'status-active' : 'status-inactive'}">${u.status ? '启用' : '禁用'}</span></td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-secondary btn-sm" onclick="showEditUserModal(${u.id})">编辑</button>
+            <button class="btn ${u.status ? 'btn-danger' : 'btn-success'} btn-sm" onclick="toggleUserStatus(${u.id}, ${u.status ? 0 : 1})">${u.status ? '禁用' : '启用'}</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">删除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderPagination(type, current, total) {
+      const container = document.getElementById(`${type}-pagination`);
+      let html = '';
+      if (total > 1) {
+        html += `<button onclick="load${type.charAt(0).toUpperCase() + type.slice(1)}(${current - 1})" ${current === 1 ? 'disabled' : ''}>上一页</button>`;
+        for (let i = 1; i <= total; i++) {
+          html += `<button onclick="load${type.charAt(0).toUpperCase() + type.slice(1)}(${i})" ${i === current ? 'class="active"' : ''}>${i}</button>`;
+        }
+        html += `<button onclick="load${type.charAt(0).toUpperCase() + type.slice(1)}(${current + 1})" ${current === total ? 'disabled' : ''}>下一页</button>`;
+      }
+      container.innerHTML = html;
+    }
+
+    async function loadPosts(page = 1) {
+      console.log('=== 加载帖子列表，页码:', page, '===');
+      const res = await fetchData(`/posts?page=${page}&page_size=10&admin=true`);
+      console.log('API返回结果:', res);
+      if (res.code === 200) {
+        allPosts = res.data.list;
+        renderPostsTable(allPosts);
+        renderPagination('posts', page, Math.ceil(res.data.total / 10));
+      } else {
+        alert('加载帖子失败: ' + res.message);
+      }
+    }
+
+    function searchPosts() {
+      const keyword = document.getElementById('post-search').value.toLowerCase();
+      const filtered = allPosts.filter(p => p.title.toLowerCase().includes(keyword));
+      renderPostsTable(filtered);
+    }
+
+    function renderPostsTable(posts) {
+      const tbody = document.querySelector('#posts-table tbody');
+      tbody.innerHTML = posts.map(p => `
+        <tr>
+          <td>${p.id}</td>
+          <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${p.title}</td>
+          <td>${p.nickname || '-'}</td>
+          <td><span class="category-badge category-${p.category}">${getCategoryText(p.category)}</span></td>
+          <td>${p.views}/${p.likes}/${p.comments}</td>
+          <td>${p.is_top ? '是' : '否'}</td>
+          <td><span class="${p.status ? 'status-active' : 'status-inactive'}">${p.status ? '正常' : '禁用'}</span></td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-secondary btn-sm" onclick="showEditPostModal(${p.id})">编辑</button>
+            <button class="btn btn-danger btn-sm" onclick="deletePost(${p.id})">删除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadNews(page = 1) {
+      const res = await fetchData(`/news/list?page=${page}&page_size=10`);
+      if (res.code === 200) {
+        allNews = res.data.list;
+        renderNewsTable(allNews);
+        renderPagination('news', page, Math.ceil(res.data.total / 10));
+      }
+    }
+
+    function searchNews() {
+      const keyword = document.getElementById('news-search').value.toLowerCase();
+      const filtered = allNews.filter(n => n.title.toLowerCase().includes(keyword));
+      renderNewsTable(filtered);
+    }
+
+    function renderNewsTable(news) {
+      const tbody = document.querySelector('#news-table tbody');
+      tbody.innerHTML = news.map(n => `
+        <tr>
+          <td>${n.id}</td>
+          <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${n.title}</td>
+          <td>${n.source || '-'}</td>
+          <td><span class="category-badge category-${n.category}">${getCategoryText(n.category)}</span></td>
+          <td>${n.views}/${n.likes}</td>
+          <td><span class="status-active">正常</span></td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-secondary btn-sm" onclick="showEditNewsModal(${n.id})">编辑</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteNews(${n.id})">删除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadNewsImages() {
+      const res = await fetchData('/news/list?page=1&page_size=100');
+      if (res.code === 200) {
+        const newsList = res.data.list;
+        const select = document.getElementById('image-news-select');
+        select.innerHTML = '<option value="">-- 请选择新闻 --</option>';
+        newsList.forEach(news => {
+          select.innerHTML += `<option value="${news.id}" data-image="${news.image || ''}">${news.id}. ${news.title.substring(0, 20)}${news.title.length > 20 ? '...' : ''}</option>`;
+        });
+        select.onchange = function() {
+          const selected = select.options[select.selectedIndex];
+          const imageUrl = selected.dataset.image;
+          const preview = document.getElementById('current-image-preview');
+          if (imageUrl) {
+            preview.innerHTML = `<img src="${imageUrl}" style="max-width: 100%; max-height: 200px; border-radius: 8px;">`;
+          } else {
+            preview.innerHTML = '<p style="color: #999;">暂无图片</p>';
+          }
+          document.getElementById('news-image-base64').value = '';
+        };
+        const grid = document.getElementById('news-images-grid');
+        grid.innerHTML = '';
+        newsList.filter(n => n.image).forEach(news => {
+          grid.innerHTML += `
+            <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; text-align: center;">
+              <img src="${news.image}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 4px;">
+              <p style="font-size: 12px; margin-top: 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${news.title}</p>
+            </div>
+          `;
+        });
+      }
+    }
+
+    function previewNewsImage() {
+      const input = document.getElementById('news-image-file');
+      const preview = document.getElementById('current-image-preview');
+      const hiddenInput = document.getElementById('news-image-base64');
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px; border-radius: 8px;">`;
+          hiddenInput.value = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function saveNewsImage() {
+      const select = document.getElementById('image-news-select');
+      const newsId = select.value;
+      const image = document.getElementById('news-image-base64').value;
+      
+      if (!newsId) {
+        alert('请选择一条新闻');
+        return;
+      }
+      if (!image) {
+        alert('请上传图片');
+        return;
+      }
+      
+      const res = await fetch(API_BASE + `/news/update/${newsId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: image })
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('图片保存成功');
+        loadNewsImages();
+      } else {
+        alert('保存失败: ' + result.message);
+      }
+    }
+
+    async function deleteNewsImage() {
+      const select = document.getElementById('image-news-select');
+      const newsId = select.value;
+      
+      if (!newsId) {
+        alert('请选择一条新闻');
+        return;
+      }
+      if (!confirm('确定要删除这张图片吗？')) return;
+      
+      const res = await fetch(API_BASE + `/news/update/${newsId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: '' })
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('图片删除成功');
+        loadNewsImages();
+      } else {
+        alert('删除失败: ' + result.message);
+      }
+    }
+
+    async function loadComments(page = 1) {
+      const res = await fetchData(`/comments/1?page=${page}&page_size=10`);
+      if (res.code === 200) {
+        allComments = res.data.list;
+        renderCommentsTable(allComments);
+        renderPagination('comments', page, Math.ceil(res.data.total / 10));
+      }
+    }
+
+    function searchComments() {
+      const keyword = document.getElementById('comment-search').value.toLowerCase();
+      const filtered = allComments.filter(c => c.content.toLowerCase().includes(keyword));
+      renderCommentsTable(filtered);
+    }
+
+    function renderCommentsTable(comments) {
+      const tbody = document.querySelector('#comments-table tbody');
+      tbody.innerHTML = comments.map(c => `
+        <tr>
+          <td>${c.id}</td>
+          <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${c.content}</td>
+          <td>帖子${c.post_id}</td>
+          <td>${c.nickname || '-'}</td>
+          <td><span class="${c.status ? 'status-active' : 'status-inactive'}">${c.status ? '正常' : '禁用'}</span></td>
+          <td style="white-space:nowrap;">
+            <button class="btn btn-danger btn-sm" onclick="deleteComment(${c.id})">删除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function getCategoryText(category) {
+      const map = { 
+        question: '提问', 
+        share: '分享', 
+        discussion: '讨论',
+        lost: '失物招领',
+        education: '教育', 
+        technology: '科技', 
+        policy: '政策', 
+        exam: '考试' 
+      };
+      return map[category] || category;
+    }
+
+    function showModal(content) {
+      document.getElementById('modal-content').innerHTML = `
+        <div class="modal-header">
+          <h3 id="modal-title">操作</h3>
+          <button class="modal-close" onclick="closeModal()">×</button>
+        </div>
+        <div class="modal-body">${content}</div>
+      `;
+      document.getElementById('modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    function showAddUserModal() {
+      showModal(`
+        <div class="form-group"><label>昵称</label><input id="add-user-nickname" placeholder="请输入昵称"></div>
+        <div class="form-group"><label>真实姓名</label><input id="add-user-realname" placeholder="请输入真实姓名"></div>
+        <div class="form-group"><label>学号</label><input id="add-user-studentid" placeholder="请输入学号"></div>
+        <div class="form-group"><label>班级</label><input id="add-user-class" placeholder="请输入班级"></div>
+        <div class="form-group"><label>手机号</label><input id="add-user-phone" placeholder="请输入手机号"></div>
+        <div class="form-group"><label>邮箱</label><input id="add-user-email" placeholder="请输入邮箱"></div>
+        <div class="form-group"><label>角色</label>
+          <select id="add-user-role">
+            <option value="student">学生</option>
+            <option value="teacher">教师</option>
+            <option value="admin">管理员</option>
+          </select>
+        </div>
+      `);
+    }
+
+    async function addUser() {
+      const data = {
+        openid: 'admin_create_' + Date.now(),
+        nickname: document.getElementById('add-user-nickname').value,
+        real_name: document.getElementById('add-user-realname').value,
+        student_id: document.getElementById('add-user-studentid').value,
+        class_name: document.getElementById('add-user-class').value,
+        phone: document.getElementById('add-user-phone').value,
+        email: document.getElementById('add-user-email').value,
+        role: document.getElementById('add-user-role').value
+      };
+      const res = await fetch(API_BASE + '/user/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('添加成功');
+        closeModal();
+        loadUsers(usersPage);
+      } else {
+        alert('添加失败: ' + result.message);
+      }
+    }
+
+    async function showEditUserModal(id) {
+      const user = allUsers.find(u => u.id === id);
+      if (!user) return;
+      showModal(`
+        <div class="form-group"><label>昵称</label><input id="edit-user-nickname" value="${user.nickname || ''}"></div>
+        <div class="form-group"><label>真实姓名</label><input id="edit-user-realname" value="${user.real_name || ''}"></div>
+        <div class="form-group"><label>学号</label><input id="edit-user-studentid" value="${user.student_id || ''}"></div>
+        <div class="form-group"><label>班级</label><input id="edit-user-class" value="${user.class_name || ''}"></div>
+        <div class="form-group"><label>手机号</label><input id="edit-user-phone" value="${user.phone || ''}"></div>
+        <div class="form-group"><label>邮箱</label><input id="edit-user-email" value="${user.email || ''}"></div>
+        <div class="form-group"><label>状态</label>
+          <select id="edit-user-status">
+            <option value="1" ${user.status ? 'selected' : ''}>启用</option>
+            <option value="0" ${!user.status ? 'selected' : ''}>禁用</option>
+          </select>
+        </div>
+      `);
+    }
+
+    async function updateUser(id) {
+      const data = {
+        id,
+        nickname: document.getElementById('edit-user-nickname').value,
+        real_name: document.getElementById('edit-user-realname').value,
+        student_id: document.getElementById('edit-user-studentid').value,
+        class_name: document.getElementById('edit-user-class').value,
+        phone: document.getElementById('edit-user-phone').value,
+        email: document.getElementById('edit-user-email').value,
+        status: parseInt(document.getElementById('edit-user-status').value)
+      };
+      const res = await fetch(API_BASE + '/user/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('更新成功');
+        closeModal();
+        loadUsers(usersPage);
+      } else {
+        alert('更新失败: ' + result.message);
+      }
+    }
+
+    async function toggleUserStatus(id, status) {
+      const res = await fetch(API_BASE + `/user/status/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        loadUsers(usersPage);
+      } else {
+        alert('操作失败: ' + result.message);
+      }
+    }
+
+    function showAddPostModal() {
+      showModal(`
+        <div class="form-group"><label>标题</label><input id="add-post-title" placeholder="请输入标题"></div>
+        <div class="form-group"><label>内容</label><textarea id="add-post-content" placeholder="请输入内容"></textarea></div>
+        <div class="form-group"><label>分类</label>
+          <select id="add-post-category">
+            <option value="question">提问</option>
+            <option value="share">分享</option>
+            <option value="discussion">讨论</option>
+            <option value="lost">失物招领</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>图片</label>
+          <div id="add-post-images-container" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-height:120px;background:#f7fafc;border-radius:8px;padding:8px;">
+            <span style="color:#999;font-size:12px;line-height:120px;">暂无图片</span>
+          </div>
+          <input type="file" id="add-post-image-input" accept="image/*" multiple style="margin-top:8px;padding:8px 0;" onchange="handleAddPostImageUpload(this)">
+          <small style="color:#718096;font-size:12px;">支持选择多张图片</small>
+        </div>
+      `);
+    }
+
+    let addPostImages = [];
+    function handleAddPostImageUpload(input) {
+      const files = input.files;
+      if (!files.length) return;
+      const container = document.getElementById('add-post-images-container');
+      if (container.querySelector('span')) container.innerHTML = '';
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imgData = e.target.result;
+          const idx = addPostImages.length;
+          addPostImages.push(imgData);
+          const div = document.createElement('div');
+          div.style = 'position:relative;display:inline-block;margin:4px;';
+          div.id = `add-post-img-${idx}`;
+          div.innerHTML = `<img src="${imgData}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><button type="button" onclick="removeAddPostImage(${idx})" style="position:absolute;top:-8px;right:-8px;background:red;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:22px;">×</button>`;
+          container.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeAddPostImage(idx) {
+      delete addPostImages[idx];
+      document.getElementById(`add-post-img-${idx}`)?.remove();
+    }
+
+    async function addPost() {
+      const filteredImages = addPostImages.filter(img => img);
+      const data = {
+        user_id: 1,
+        title: document.getElementById('add-post-title').value,
+        content: document.getElementById('add-post-content').value,
+        category: document.getElementById('add-post-category').value,
+        images: JSON.stringify(filteredImages)
+      };
+      const res = await fetch(API_BASE + '/post/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('发布成功');
+        addPostImages = [];
+        closeModal();
+        loadPosts(postsPage);
+      } else {
+        alert('发布失败: ' + result.message);
+      }
+    }
+
+    async function showEditPostModal(id) {
+      const post = allPosts.find(p => p.id === id);
+      if (!post) return;
+      let images = [];
+      try {
+        if (post.images) {
+          const parsed = JSON.parse(post.images);
+          images = Array.isArray(parsed) ? parsed : [];
+        }
+      } catch (e) {
+        console.error('解析图片数据失败:', post.images, e);
+        images = [];
+      }
+      const imagesHtml = images.map((img, idx) => {
+        if (img && typeof img === 'string' && img.startsWith('data:image')) {
+          return `<div style="position:relative;display:inline-block;margin:4px;" id="edit-img-${idx}"><img src="${img}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><button type="button" onclick="removeEditImage(${idx})" style="position:absolute;top:-8px;right:-8px;background:red;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:22px;">×</button></div>`;
+        }
+        return '';
+      }).join('');
+      showModal(`
+        <div class="form-group"><label>标题</label><input id="edit-post-title" value="${post.title || ''}"></div>
+        <div class="form-group"><label>内容</label><textarea id="edit-post-content">${post.content || ''}</textarea></div>
+        <div class="form-group"><label>分类</label>
+          <select id="edit-post-category">
+            <option value="question" ${post.category === 'question' ? 'selected' : ''}>提问</option>
+            <option value="share" ${post.category === 'share' ? 'selected' : ''}>分享</option>
+            <option value="discussion" ${post.category === 'discussion' ? 'selected' : ''}>讨论</option>
+            <option value="lost" ${post.category === 'lost' ? 'selected' : ''}>失物招领</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>图片管理</label>
+          <div id="edit-post-images-container" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;min-height:120px;background:#f7fafc;border-radius:8px;padding:8px;">
+            ${imagesHtml || '<span style="color:#999;font-size:12px;line-height:120px;">暂无图片</span>'}
+          </div>
+          <input type="file" id="edit-post-image-input" accept="image/*" multiple style="margin-top:8px;padding:8px 0;" onchange="handleEditImageUpload(this, ${id})">
+          <small style="color:#718096;font-size:12px;">支持选择多张图片</small>
+        </div>
+        <div class="form-group"><label>置顶</label>
+          <select id="edit-post-top">
+            <option value="0" ${!post.is_top ? 'selected' : ''}>否</option>
+            <option value="1" ${post.is_top ? 'selected' : ''}>是</option>
+          </select>
+        </div>
+        <div class="form-group"><label>状态</label>
+          <select id="edit-post-status">
+            <option value="1" ${post.status ? 'selected' : ''}>正常</option>
+            <option value="0" ${!post.status ? 'selected' : ''}>禁用</option>
+          </select>
+        </div>
+      `);
+    }
+
+    let editPostImages = {};
+    function handleEditImageUpload(input, postId) {
+      const files = input.files;
+      if (!files.length) return;
+      const container = document.getElementById('edit-post-images-container');
+      if (!editPostImages[postId]) editPostImages[postId] = [];
+      
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imgData = e.target.result;
+          const idx = editPostImages[postId].length;
+          editPostImages[postId].push(imgData);
+          const div = document.createElement('div');
+          div.style = 'position:relative;display:inline-block;margin:4px;';
+          div.id = `edit-new-img-${idx}`;
+          div.innerHTML = `<img src="${imgData}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;"><button type="button" onclick="removeNewEditImage(${postId},${idx})" style="position:absolute;top:-8px;right:-8px;background:red;color:white;border:none;border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:14px;line-height:22px;">×</button>`;
+          container.appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeEditImage(idx) {
+      const postId = allPosts[document.querySelector('#posts-table tbody tr') ? 0 : 0]?.id;
+      document.getElementById(`edit-img-${idx}`)?.remove();
+    }
+
+    function removeNewEditImage(postId, idx) {
+      delete editPostImages[postId][idx];
+      document.getElementById(`edit-new-img-${idx}`)?.remove();
+    }
+
+    async function updatePost(id) {
+      const post = allPosts.find(p => p.id === id);
+      const existingImages = post && post.images ? JSON.parse(post.images) : [];
+      const newImages = editPostImages[id] ? editPostImages[id].filter(img => img) : [];
+      const allImages = [...existingImages, ...newImages];
+      
+      const data = {
+        title: document.getElementById('edit-post-title').value,
+        content: document.getElementById('edit-post-content').value,
+        category: document.getElementById('edit-post-category').value,
+        is_top: parseInt(document.getElementById('edit-post-top').value),
+        status: parseInt(document.getElementById('edit-post-status').value),
+        images: JSON.stringify(allImages)
+      };
+      const res = await fetch(API_BASE + `/post/update/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('更新成功');
+        delete editPostImages[id];
+        closeModal();
+        loadPosts(postsPage);
+      } else {
+        alert('更新失败: ' + result.message);
+      }
+    }
+
+    async function resetPostIds() {
+      console.log('=== 点击重置ID按钮 ===');
+      if (!confirm('确定要重置所有帖子的ID吗？这将使ID从1开始连续编号。')) return;
+      try {
+        console.log('调用重置API...');
+        const res = await fetch(API_BASE + '/reset-post-ids', { method: 'POST' });
+        const result = await res.json();
+        console.log('重置API返回:', result);
+        if (result.code === 200) {
+          alert('帖子ID重置成功！');
+          loadPosts(1);
+        } else {
+          alert('重置失败: ' + result.message);
+        }
+      } catch (error) {
+        console.error('重置异常:', error);
+        alert('重置失败: ' + error.message);
+      }
+    }
+
+    async function deletePost(id) {
+      if (!confirm('确定要删除这条帖子吗？')) return;
+      const res = await fetch(API_BASE + `/post/delete/${id}`, { method: 'POST' });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('删除成功');
+        loadPosts(postsPage);
+      } else {
+        alert('删除失败: ' + result.message);
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('确定要删除该用户吗？此操作不可恢复！')) return;
+      console.log('=== 删除用户请求 ===');
+      console.log('用户ID:', id);
+      try {
+        const res = await fetch(API_BASE + '/admin/users/delete/' + id, { 
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        console.log('HTTP状态:', res.status);
+        if (!res.ok) {
+          console.log('响应文本:', await res.text());
+          alert('删除失败: HTTP ' + res.status);
+          return;
+        }
+        const result = await res.json();
+        console.log('API返回:', result);
+        if (result.code === 200) {
+          alert('删除成功');
+          loadUsers(usersPage);
+        } else {
+          alert('删除失败: ' + result.message);
+        }
+      } catch (error) {
+        console.error('删除异常:', error);
+        alert('删除失败: ' + error.message);
+      }
+    }
+
+    function showAddNewsModal() {
+      showModal(`
+        <div class="form-group"><label>标题</label><input id="add-news-title" placeholder="请输入标题"></div>
+        <div class="form-group"><label>图片</label>
+          <div style="border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('add-news-image-input').click()">
+            <input type="file" id="add-news-image-input" accept="image/*" style="display: none;" onchange="previewAddNewsImage()">
+            <div id="add-news-preview" style="color: #999;">点击上传图片</div>
+          </div>
+          <input type="hidden" id="add-news-image">
+        </div>
+        <div class="form-group"><label>摘要</label><textarea id="add-news-summary" placeholder="请输入摘要"></textarea></div>
+        <div class="form-group"><label>内容</label><textarea id="add-news-content" placeholder="请输入内容"></textarea></div>
+        <div class="form-group"><label>来源</label><input id="add-news-source" placeholder="请输入来源"></div>
+        <div class="form-group"><label>分类</label>
+          <select id="add-news-category">
+            <option value="education">教育</option>
+            <option value="technology">科技</option>
+            <option value="policy">政策</option>
+            <option value="exam">考试</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+          <button class="btn btn-primary" onclick="addNews()">保存</button>
+        </div>
+      `);
+    }
+
+    function previewAddNewsImage() {
+      const input = document.getElementById('add-news-image-input');
+      const preview = document.getElementById('add-news-preview');
+      const hiddenInput = document.getElementById('add-news-image');
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px; border-radius: 8px;">`;
+          hiddenInput.value = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function addNews() {
+      const data = {
+        title: document.getElementById('add-news-title').value,
+        summary: document.getElementById('add-news-summary').value,
+        content: document.getElementById('add-news-content').value,
+        source: document.getElementById('add-news-source').value,
+        category: document.getElementById('add-news-category').value,
+        image: document.getElementById('add-news-image').value
+      };
+      const res = await fetch(API_BASE + '/news/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('添加成功');
+        closeModal();
+        loadNews(newsPage);
+      } else {
+        alert('添加失败: ' + result.message);
+      }
+    }
+
+    async function showEditNewsModal(id) {
+      const news = allNews.find(n => n.id === id);
+      if (!news) return;
+      const imagePreview = news.image ? `<img src="${news.image}" style="max-width: 100%; max-height: 200px; border-radius: 8px;">` : '点击上传图片';
+      showModal(`
+        <div class="form-group"><label>标题</label><input id="edit-news-title" value="${news.title || ''}"></div>
+        <div class="form-group"><label>图片</label>
+          <div style="border: 2px dashed #ddd; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer;" onclick="document.getElementById('edit-news-image-input').click()">
+            <input type="file" id="edit-news-image-input" accept="image/*" style="display: none;" onchange="previewEditNewsImage()">
+            <div id="edit-news-preview">${imagePreview}</div>
+          </div>
+          <input type="hidden" id="edit-news-image" value="${news.image || ''}">
+        </div>
+        <div class="form-group"><label>摘要</label><textarea id="edit-news-summary">${news.summary || ''}</textarea></div>
+        <div class="form-group"><label>内容</label><textarea id="edit-news-content">${news.content || ''}</textarea></div>
+        <div class="form-group"><label>来源</label><input id="edit-news-source" value="${news.source || ''}"></div>
+        <div class="form-group"><label>分类</label>
+          <select id="edit-news-category">
+            <option value="education" ${news.category === 'education' ? 'selected' : ''}>教育</option>
+            <option value="technology" ${news.category === 'technology' ? 'selected' : ''}>科技</option>
+            <option value="policy" ${news.category === 'policy' ? 'selected' : ''}>政策</option>
+            <option value="exam" ${news.category === 'exam' ? 'selected' : ''}>考试</option>
+          </select>
+        </div>
+        <div class="form-group"><label>浏览量</label><input type="number" id="edit-news-views" value="${news.views || 0}" min="0"></div>
+        <div class="form-group"><label>点赞量</label><input type="number" id="edit-news-likes" value="${news.likes || 0}" min="0"></div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+          <button class="btn btn-primary" onclick="updateNews(${id})">保存</button>
+        </div>
+      `);
+    }
+
+    function previewEditNewsImage() {
+      const input = document.getElementById('edit-news-image-input');
+      const preview = document.getElementById('edit-news-preview');
+      const hiddenInput = document.getElementById('edit-news-image');
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; max-height: 200px; border-radius: 8px;">`;
+          hiddenInput.value = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    async function updateNews(id) {
+      const data = {
+        title: document.getElementById('edit-news-title').value,
+        summary: document.getElementById('edit-news-summary').value,
+        content: document.getElementById('edit-news-content').value,
+        source: document.getElementById('edit-news-source').value,
+        category: document.getElementById('edit-news-category').value,
+        image: document.getElementById('edit-news-image').value,
+        views: parseInt(document.getElementById('edit-news-views').value) || 0,
+        likes: parseInt(document.getElementById('edit-news-likes').value) || 0,
+        status: 1
+      };
+      const res = await fetch(API_BASE + `/news/update/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('更新成功');
+        closeModal();
+        loadNews(newsPage);
+      } else {
+        alert('更新失败: ' + result.message);
+      }
+    }
+
+    async function deleteNews(id) {
+      if (!confirm('确定要删除这条新闻吗？')) return;
+      const res = await fetch(API_BASE + `/news/delete/${id}`, { method: 'POST' });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('删除成功');
+        loadNews(newsPage);
+      } else {
+        alert('删除失败: ' + result.message);
+      }
+    }
+
+    async function deleteComment(id) {
+      if (!confirm('确定要删除这条评论吗？')) return;
+      const res = await fetch(API_BASE + `/comment/delete/${id}`, { method: 'POST' });
+      const result = await res.json();
+      if (result.code === 200) {
+        alert('删除成功');
+        loadComments(commentsPage);
+      } else {
+        alert('删除失败: ' + result.message);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showPage('dashboard');
+    });
+  </script>
+</body>
+</html>

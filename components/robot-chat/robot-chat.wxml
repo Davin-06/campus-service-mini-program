@@ -1,0 +1,47 @@
+<view class="robot-chat-panel">
+  <view class="robot-chat-header">
+    <view class="robot-chat-avatar">🤖</view>
+    <text class="robot-chat-title">智能助手</text>
+    <view class="robot-chat-close" bindtap="closeChat">×</view>
+  </view>
+  
+  <scroll-view 
+    class="robot-chat-content" 
+    scroll-y 
+    scroll-top="{{scrollTop}}"
+    style="height: 400rpx;"
+  >
+    <view 
+      class="robot-message {{item.type}}" 
+      wx:for="{{messages}}" 
+      wx:key="id"
+    >
+      <view class="robot-message-bubble">{{item.content}}</view>
+    </view>
+    
+    <view class="robot-typing-indicator" wx:if="{{isTyping}}">
+      <view class="robot-typing-dot"></view>
+      <view class="robot-typing-dot"></view>
+      <view class="robot-typing-dot"></view>
+    </view>
+  </scroll-view>
+  
+  <view class="robot-chat-input-area">
+    <view 
+      class="robot-chat-voice-btn {{isRecording ? 'active' : ''}}" 
+      bindtouchstart="startRecording"
+      bindtouchend="stopRecording"
+    >
+      🎤
+    </view>
+    <input 
+      class="robot-chat-input" 
+      placeholder="输入消息..." 
+      value="{{inputText}}"
+      bindinput="onInput"
+      confirm-type="send"
+      bindconfirm="sendMessage"
+    />
+    <view class="robot-chat-send-btn" bindtap="sendMessage">➤</view>
+  </view>
+</view>

@@ -1,0 +1,289 @@
+.container {
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+.header {
+  background: #ffffff;
+  padding: 100rpx 40rpx 30rpx;
+  text-align: center;
+  margin-top: -20rpx;
+  position: relative;
+}
+
+.back-btn {
+  position: absolute;
+  left: 30rpx;
+  top: 100rpx;
+}
+
+.back-icon {
+  font-size: 48rpx;
+  color: #333;
+}
+
+.header-title {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.content {
+  height: calc(100vh - 300rpx);
+  padding: 20rpx;
+}
+
+.post-card {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+  background: #f5f5f5;
+}
+
+.author-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.author-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 6rpx;
+}
+
+.author-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+}
+
+.author-tag {
+  font-size: 22rpx;
+  color: #42A5F5;
+  background: #E3F2FD;
+  padding: 4rpx 12rpx;
+  border-radius: 20rpx;
+}
+
+.post-time {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.post-content {
+  font-size: 32rpx;
+  color: #333333;
+  line-height: 1.8;
+  margin-bottom: 20rpx;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.post-images {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+}
+
+.post-image {
+  width: 100%;
+  border-radius: 12rpx;
+}
+
+.post-stats {
+  display: flex;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #f5f5f5;
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+.stat-icon {
+  font-size: 28rpx;
+}
+
+.stat-text {
+  font-size: 26rpx;
+  color: #999;
+}
+
+.actions-bar {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+}
+
+.action-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.action-icon {
+  font-size: 44rpx;
+}
+
+.action-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.comments-section {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.comment-item {
+  display: flex;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.comment-author {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.comment-time {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.comment-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+  margin-bottom: 12rpx;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 24rpx;
+}
+
+.comment-action {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.empty-comments {
+  padding: 60rpx 0;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.comment-input-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  padding: 20rpx 30rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.comment-input {
+  flex: 1;
+  height: 80rpx;
+  background: #f5f7fa;
+  border-radius: 40rpx;
+  padding: 0 30rpx;
+  font-size: 28rpx;
+}
+
+.send-btn {
+  width: 100rpx;
+  height: 80rpx;
+  background: #42A5F5;
+  border-radius: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-text {
+  font-size: 28rpx;
+  color: #fff;
+}
+
+.robot-area {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.robot-area movable-view {
+  pointer-events: auto;
+}

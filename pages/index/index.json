@@ -1,0 +1,6 @@
+{
+  "navigationStyle": "custom",
+  "usingComponents": {
+    "robot-chat": "/components/robot-chat/robot-chat"
+  }
+}

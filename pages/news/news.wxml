@@ -1,0 +1,73 @@
+<view class="container">
+  <view class="header">
+    <text class="header-title">新闻资讯</text>
+  </view>
+
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">⌕</text>
+      <input 
+        class="search-input" 
+        placeholder="搜索新闻关键词" 
+        value="{{searchKeyword}}" 
+        bindinput="onSearchInput"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchKeyword}}" bindtap="clearSearch">×</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-x class="category-bar">
+    <view class="category-item {{currentCategory === 'all' ? 'active' : ''}}" bindtap="changeCategory" data-category="all">
+      <text class="category-text">全部</text>
+    </view>
+    <view class="category-item {{currentCategory === 'education' ? 'active' : ''}}" bindtap="changeCategory" data-category="education">
+      <text class="category-text">学校要闻</text>
+    </view>
+    <view class="category-item {{currentCategory === 'technology' ? 'active' : ''}}" bindtap="changeCategory" data-category="technology">
+      <text class="category-text">通知公告</text>
+    </view>
+    <view class="category-item {{currentCategory === 'policy' ? 'active' : ''}}" bindtap="changeCategory" data-category="policy">
+      <text class="category-text">学术讲座</text>
+    </view>
+    <view class="category-item {{currentCategory === 'exam' ? 'active' : ''}}" bindtap="changeCategory" data-category="exam">
+      <text class="category-text">校园活动</text>
+    </view>
+  </scroll-view>
+
+  <scroll-view scroll-y class="news-list" bindscrolltolower="onReachBottom">
+    <view class="news-item" wx:for="{{filteredNews}}" wx:key="id" bindtap="viewNews" data-id="{{item.id}}">
+      <view class="news-card">
+        <view class="news-content">
+          <text class="news-title">{{item.title}}</text>
+          <text class="news-summary">{{item.summary}}</text>
+          <view class="news-footer">
+            <text class="news-date">{{item.time}}</text>
+            <text class="news-views">👁 {{item.views}}</text>
+          </view>
+        </view>
+        <view class="news-image-wrap">
+          <view class="news-image">
+            <image wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" />
+            <view wx:else class="image-placeholder">
+              <text class="placeholder-icon">+</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{filteredNews.length === 0 && !loading}}">
+      <text class="empty-icon">📰</text>
+      <text class="empty-text">暂无新闻</text>
+    </view>
+
+    <view class="loading" wx:if="{{loading}}">
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <view class="loading-more" wx:if="{{!hasMore && filteredNews.length > 0}}">
+      <text class="loading-more-text">没有更多了</text>
+    </view>
+  </scroll-view>
+</view>
